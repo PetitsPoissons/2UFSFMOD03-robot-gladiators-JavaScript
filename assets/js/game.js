@@ -1,24 +1,8 @@
-// Game States
+/* GAME INFORMATION / VARIABLES */
 // "WIN" - Player robot has defeated all enemy-robots
 //    * Fight all enemy-robots
 //    * Defeat each enemy-robot
 // "LOSE" - Player robot's health is zero or less
-
-// Function to generate a random numeric value
-var randomNumber = function (min, max) {
-	var value = Math.floor(Math.random() * (max - min + 1)) + min; // value randomly picked between 40 and 60
-	return value;
-};
-
-// Function to set name
-var getPlayerName = function () {
-	var name = '';
-	while (name === '' || name === null) {
-		name = prompt('What is your robot name?');
-	}
-	console.log('Your robot name is ' + name);
-	return name;
-};
 
 var playerInfo = {
 	name: getPlayerName(),
@@ -62,7 +46,26 @@ var enemyInfo = [
 		attack: randomNumber(10, 14),
 	},
 ];
+/* END GAME INFORMATION / VARIABLES */
 
+/* GAME FUNCTIONS */
+// Function to generate a random numeric value
+var randomNumber = function (min, max) {
+	var value = Math.floor(Math.random() * (max - min + 1)) + min; // value randomly picked between 40 and 60
+	return value;
+};
+
+// Function to set name
+var getPlayerName = function () {
+	var name = '';
+	while (name === '' || name === null) {
+		name = prompt('What is your robot name?');
+	}
+	console.log('Your robot name is ' + name);
+	return name;
+};
+
+// Function to check if player wants to fight or skip
 var fightOrSkip = function () {
 	// Ask player whether they want to fight or skip the battle
 	var promptFight = window.prompt(
@@ -75,7 +78,7 @@ var fightOrSkip = function () {
 	}
 
 	// If player picks "skip" confirm and then stop the loop
-	if (promptFight.toLocaleLowerCase() === 'skip') {
+	if (promptFight.toLowerCase() === 'skip') {
 		// Confirm player wants to skip
 		var confirmSkip = window.confirm("Are you sure you'd like to quit?");
 
@@ -93,6 +96,7 @@ var fightOrSkip = function () {
 	return false;
 };
 
+// fight function (now with parameter for enemy's object holding name, health, and attack values)
 var fight = function (enemy) {
 	// Keep track of who goes first
 	var isPlayerTurn = true;
@@ -102,8 +106,9 @@ var fight = function (enemy) {
 		isPlayerTurn = false;
 	}
 
-	// Repeat and execute as long as the enemy-robot is alive
+	// Repeat and execute as long as both robots are alive
 	while (playerInfo.health > 0 && enemy.health > 0) {
+		// Player attacks first
 		if (isPlayerTurn) {
 			// Ask player if they'd like to fight or skip
 			if (fightOrSkip()) {
@@ -112,9 +117,8 @@ var fight = function (enemy) {
 			}
 			// Generate random damage value based on player's attack power
 			var damage = randomNumber(playerInfo.attack - 3, playerInfo.attack);
+			// Remove enemy's health by subtracting the amount we set in the damage variable
 			enemy.health = Math.max(0, enemy.health - damage);
-
-			// Log a resulting message to the console so we know that it worked.
 			console.log(
 				playerInfo.name +
 					' attacked ' +
@@ -138,12 +142,13 @@ var fight = function (enemy) {
 					enemy.name + ' still has ' + enemy.health + ' health left.'
 				);
 			}
-		} else {
+		}
+		// Player gets attacked first
+		else {
 			// Generate random damage value based on enemy's attack power
 			var damage = randomNumber(enemy.attack - 3, enemy.attack);
+			// Remove enemy's health by subtracting the amount we set in the damage variable
 			playerInfo.health = Math.max(0, playerInfo.health - damage);
-
-			// Log a resulting message to the console so we know that it worked.
 			console.log(
 				enemy.name +
 					' attacked ' +
@@ -175,7 +180,13 @@ var fight = function (enemy) {
 var startGame = function () {
 	// Reset player stats
 	playerInfo.reset();
+
+	// Fight each enemy robot by looping over them and fighting them one at a time
 	for (var i = 0; i < enemyInfo.length; i++) {
+		// See player stats
+		console.log(playerInfo);
+
+		// If player is still alive, keep fighting
 		if (playerInfo.health > 0) {
 			// Let player know what round they are in, remember that arrays start at 0 so it needs to have 1 added to it
 			window.alert('Welcome to Robot Gladiators! Round ' + (i + 1));
@@ -260,6 +271,8 @@ var shop = function () {
 			break;
 	}
 };
+/* END GAME FUNCTIONS */
 
+/* RUN GAME */
 // Start the game when the page loads
 startGame();
